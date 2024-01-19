@@ -36,6 +36,11 @@ public class PostController {
         return postService.getByAuthor(author);
     }
 
+    @GetMapping("/{postId}")
+    public PostDto getOne(@PathVariable Long postId) {
+        return postService.getOne(postId);
+    }
+
     @PostMapping
     public void createPost(@RequestBody Post post) {
         postService.create(post);
