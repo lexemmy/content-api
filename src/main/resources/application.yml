@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: content-api
+  datasource:
+    password:
+    url: jdbc:postgresql://localhost:5432/content
+    username:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: false
+    show-sql: true
+    defer-datasource-initialization: true
+    generate-ddl: true
+  sql:
+    init:
+      mode: always
+server:
+  port: 8080
