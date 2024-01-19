@@ -1,22 +1,10 @@
 package com.example.lab1.repository;
 
 import com.example.lab1.model.Post;
+import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface PostRepository {
+public interface PostRepository extends JpaRepository<Post, Long> {
 
-    List<Post> findAll();
-
-    void save(Post post);
-
-    Post findById(Long postId);
-
-    List<Post> findByAuthor(String author);
-
-    List<Post> searchByAuthor(String keyword);
-
-    void update(Long postId, Post post);
-
-    void delete(Long postId);
 }
