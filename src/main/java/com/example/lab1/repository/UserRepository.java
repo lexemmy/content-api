@@ -10,4 +10,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u WHERE SIZE(u.posts) > :minPosts")
     List<User> findByPostsSizeGreaterThan(int minPosts);
+
+    @Query("SELECT DISTINCT u FROM User u JOIN FETCH u.posts p WHERE p.title = :postTitle")
+    List<User> findUsersByPostTitle(String postTitle);
 }

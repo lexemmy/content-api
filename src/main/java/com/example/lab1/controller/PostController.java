@@ -2,6 +2,7 @@ package com.example.lab1.controller;
 
 import com.example.lab1.dto.request.PostRequestDto;
 import com.example.lab1.dto.response.PostDto;
+import com.example.lab1.dto.response.UserDto;
 import com.example.lab1.model.Post;
 import com.example.lab1.service.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,18 @@ public class PostController {
     PostService postService;
 
     @GetMapping
-    public List<EntityModel<PostDto>> getAll() {
-        List<PostDto> posts = postService.getAll();
+    public List<EntityModel<PostDto>> getAll(@RequestParam(name = "title", required = false) String title) {
+
+        List<PostDto> posts = (title != null) ? postService.findByTitle(title) : postService.getAll();
 
         return posts.stream()
                 .map(this::addLinks)
                 .collect(Collectors.toList());
+    }
+
+    @GetMapping("/{postId}")
+    public PostDto getOne(@PathVariable Long postId){
+        return postService.getOne(postId);
     }
 
     @PostMapping
@@ -34,10 +41,6 @@ public class PostController {
         postService.create(post);
     }
 
-//    @PutMapping("/{postId}")
-//    public void updatePost(@PathVariable Long postId, @RequestBody Post post) {
-//        postService.update(postId, post);
-//    }
 
     @DeleteMapping("/{postId}")
     public void deletePost(@PathVariable Long postId) {

@@ -1,8 +1,10 @@
 package com.example.lab1.service.impl;
 
+import com.example.lab1.dto.response.CommentDto;
 import com.example.lab1.dto.response.PostDto;
 import com.example.lab1.dto.response.UserDto;
 import com.example.lab1.helper.ListMapper;
+import com.example.lab1.model.Comment;
 import com.example.lab1.model.Post;
 import com.example.lab1.model.User;
 import com.example.lab1.repository.UserRepository;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -36,6 +39,11 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public List<UserDto> findUsersByPostTitle(String title) {
+        return listMapper.mapList(userRepository.findUsersByPostTitle(title), new UserDto());
+    }
+
+    @Override
     public UserDto getOne(Long userId) {
         return modelMapper.map(userRepository.findById(userId).orElse(null), UserDto.class);
     }
@@ -53,6 +61,25 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public CommentDto getUserCommentById(Long userId, Long postId, Long commentId) {
+        User user = userRepository.findById(userId).orElse(null);
+
+        List<Post> posts = user.getPosts();
+
+        Post targetPost = posts.stream()
+                    .filter(post -> post.getId().equals(postId))
+                    .findFirst()
+                    .orElse(null);
+
+        Comment targetComment = targetPost.getComments().stream()
+                .filter(comment -> comment.getId().equals(commentId))
+                .findFirst()
+                .orElse(null);
+
+        return modelMapper.map(targetComment, CommentDto.class);
+    }
+
+    @Override
     public void update(Long userId, User updatedUser) {
         User user = userRepository.findById(userId).orElse(null);
 
@@ -60,7 +87,6 @@ public class UserServiceImpl implements UserService {
             user.setName(updatedUser.getName());
 
             userRepository.save(user);
-            System.out.println(user);
         }
     }
 

@@ -10,6 +10,8 @@ public interface PostService {
 
     List<PostDto> getAll();
 
+    List<PostDto> findByTitle(String title);
+
     void create(PostRequestDto post);
 
     PostDto getOne(Long postId);

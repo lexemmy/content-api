@@ -1,5 +1,6 @@
 package com.example.lab1.controller;
 
+import com.example.lab1.dto.response.CommentDto;
 import com.example.lab1.dto.response.PostDto;
 import com.example.lab1.dto.response.UserDto;
 import com.example.lab1.model.Post;
@@ -23,8 +24,18 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserDto> getAll(@RequestParam(name = "minPosts", required = false) Integer minPosts){
-        return minPosts != null ? userService.getUsersWithMoreThanNPosts(minPosts) : userService.getAll();
+    public List<UserDto> getAll(
+            @RequestParam(name = "minPosts", required = false) Integer minPosts,
+            @RequestParam(name = "title", required = false) String title){
+        List<UserDto> users;
+        if (minPosts != null) {
+            users = userService.getUsersWithMoreThanNPosts(minPosts);
+        } else if (title != null) {
+            users = userService.findUsersByPostTitle(title);
+        } else {
+            users = userService.getAll();
+        }
+        return users;
     }
 
     @GetMapping("/{userId}")
@@ -35,6 +46,11 @@ public class UserController {
     @GetMapping("/{userId}/posts")
     public List<PostDto> getUserPosts(@PathVariable Long userId){
         return userService.getUserPosts(userId);
+    }
+
+    @GetMapping("/{userId}/posts/{postId}/comments/{commentId}")
+    public CommentDto getUserCommentById(@PathVariable Long userId, @PathVariable Long postId, @PathVariable Long commentId){
+        return userService.getUserCommentById(userId,postId, commentId);
     }
 
     @PutMapping("/{userId}")

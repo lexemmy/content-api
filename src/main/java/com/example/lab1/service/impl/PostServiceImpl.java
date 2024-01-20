@@ -35,6 +35,11 @@ public class PostServiceImpl implements PostService {
         return listMapper.mapList(postRepository.findAll(), new PostDto());
     }
 
+    @Override
+    public List<PostDto> findByTitle(String title) {
+        return listMapper.mapList(postRepository.findByTitle(title), new PostDto());
+    }
+
 
     @Override
     public void create(PostRequestDto postRequestDto){
