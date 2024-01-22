@@ -1,5 +1,6 @@
 package com.example.lab1.service.impl;
 
+import com.example.lab1.aspect.ExecutionTimeAspect;
 import com.example.lab1.dto.response.CommentDto;
 import com.example.lab1.dto.response.PostDto;
 import com.example.lab1.dto.response.UserDto;
@@ -44,6 +45,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @ExecutionTimeAspect.ExecutionTime
     public UserDto getOne(Long userId) {
         return modelMapper.map(userRepository.findById(userId).orElse(null), UserDto.class);
     }
