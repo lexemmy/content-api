@@ -1,6 +1,8 @@
 package com.example.lab1.aspect;
 
+import com.example.lab1.model.ExceptionLog;
 import com.example.lab1.model.Logger;
+import com.example.lab1.repository.ExceptionLogRepository;
 import com.example.lab1.repository.LoggerRepository;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
@@ -25,6 +27,9 @@ public class ExecutionTimeAspect {
     @Autowired
     LoggerRepository loggerRepository;
 
+    @Autowired
+    ExceptionLogRepository exceptionLogRepository;
+
     @Target(ElementType.METHOD)
     @Retention(RetentionPolicy.RUNTIME)
     public @interface ExecutionTime {
@@ -34,14 +39,21 @@ public class ExecutionTimeAspect {
     public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         long startTime = System.currentTimeMillis();
 
-        Object result = joinPoint.proceed();
+        try {
 
-        long endTime = System.currentTimeMillis();
-        long executionTime = endTime - startTime;
+            Object result = joinPoint.proceed();
 
-        logExecution(joinPoint, executionTime);
+            long endTime = System.currentTimeMillis();
+            long executionTime = endTime - startTime;
 
-        return result;
+            logExecution(joinPoint, executionTime);
+
+            return result;
+        } catch (Throwable throwable) {
+
+            logException(joinPoint, throwable);
+            throw throwable;
+        }
     }
 
     private void logExecution(JoinPoint joinPoint, long executionTime) {
@@ -51,13 +63,29 @@ public class ExecutionTimeAspect {
         String operationLog = String.format("Method: %s, Execution Time: %d ms", methodName, executionTime);
 
         Logger logEntry = new Logger();
-        logEntry.setTransactionId(generateTransactionId()); // You need to implement generateTransactionId()
+        logEntry.setTransactionId(generateTransactionId());
         logEntry.setLogDate(Date.valueOf(LocalDate.now()));
         logEntry.setLogTime(Date.valueOf(LocalDate.now()));
         logEntry.setPrinciple(principle);
         logEntry.setOperation(operationLog);
 
         loggerRepository.save(logEntry);
+    }
+
+    private void logException(JoinPoint joinPoint, Throwable exception) {
+
+        String methodName = joinPoint.getSignature().getName();
+        String principle = "fake_static_user"; // Fake static user for now
+
+        ExceptionLog exceptionLog = new ExceptionLog();
+        exceptionLog.setTransactionId(generateTransactionId());
+        exceptionLog.setDate(LocalDate.now());
+        exceptionLog.setTime(LocalTime.now());
+        exceptionLog.setPrinciple(principle);
+        exceptionLog.setOperation("Method: " + methodName);
+        exceptionLog.setExceptionType(exception.getClass().getName());
+
+        exceptionLogRepository.save(exceptionLog);
     }
 
     private String generateTransactionId() {
