@@ -10,6 +10,8 @@ import com.example.lab1.repository.UserRepository;
 import com.example.lab1.service.PostService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,6 +45,8 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public void create(PostRequestDto postRequestDto){
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Post post = new Post();
     post.setTitle(postRequestDto.getTitle());
     post.setContent(postRequestDto.getContent());

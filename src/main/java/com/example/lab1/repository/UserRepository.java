@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 
+    User findByEmail(String email);
+
     @Query("SELECT u FROM User u WHERE SIZE(u.posts) > :minPosts")
     List<User> findByPostsSizeGreaterThan(int minPosts);
 
