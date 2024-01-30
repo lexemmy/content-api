@@ -44,9 +44,9 @@ public class PostServiceImpl implements PostService {
 
 
     @Override
-    public void create(PostRequestDto postRequestDto){
+    public PostDto create(PostRequestDto postRequestDto){
 
-        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       // UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
     Post post = new Post();
     post.setTitle(postRequestDto.getTitle());
     post.setContent(postRequestDto.getContent());
@@ -57,6 +57,8 @@ public class PostServiceImpl implements PostService {
     post.setUser(user);
 
     postRepository.save(post);
+
+    return modelMapper.map(post, PostDto.class);
 
     }
 

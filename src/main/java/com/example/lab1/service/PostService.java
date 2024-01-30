@@ -12,7 +12,7 @@ public interface PostService {
 
     List<PostDto> findByTitle(String title);
 
-    void create(PostRequestDto post);
+    PostDto create(PostRequestDto post);
 
     PostDto getOne(Long postId);
 

@@ -37,8 +37,8 @@ public class PostController {
     }
 
     @PostMapping
-    public void createPost(@RequestBody PostRequestDto post) {
-        postService.create(post);
+    public PostDto createPost(@RequestBody PostRequestDto post) {
+       return  postService.create(post);
     }
 
 
